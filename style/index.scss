@@ -1,1 +1,506 @@
-@import url('https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@600;700&display=swap");
+
+$scissors-gradient: linear-gradient(hsl(39, 89%, 49%), hsl(40, 84%, 53%));
+$paper-gradient: linear-gradient(hsl(230, 89%, 62%), hsl(230, 89%, 65%));
+$rock-gradient: linear-gradient(hsl(349, 71%, 52%), hsl(349, 70%, 56%));
+$lizard-gradient: linear-gradient(hsl(261, 73%, 60%), hsl(261, 72%, 63%));
+$spock-gradient: linear-gradient(hsl(189, 59%, 53%), hsl(189, 58%, 57%));
+
+$dark-text: hsl(229, 25%, 31%);
+$blue-text: hsl(229, 64%, 46%);
+$outline: hsl(217, 16%, 45%);
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-image: radial-gradient(hsl(214, 47%, 23%), hsl(237, 49%, 15%));
+  font-family: "Barlow Semi Condensed", sans-serif;
+  text-transform: uppercase;
+  color: white;
+  padding: 2rem;
+}
+
+button {
+  border: 0;
+  background: none;
+  outline: 0;
+  cursor: pointer;
+}
+img {
+  max-width: 100%;
+}
+
+.btn {
+  display: block;
+  border-radius: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  transition-property: color, background-color;
+  transition-duration: 0.3s;
+}
+
+.primary-btn {
+  border: 1px solid white;
+  padding: 0.85rem 2.5rem 0.7rem;
+  color: white;
+}
+.primary-btn:hover {
+  background-color: white;
+  color: hsl(214, 47%, 23%);
+}
+.secondary-btn {
+  display: block;
+
+  background-color: white;
+  color: $dark-text;
+  padding: 1rem 3.7rem;
+}
+.secondary-btn:hover {
+  color: hsl(349, 70%, 56%);
+}
+
+/* ################################ Gestures ################################ */
+.gesture {
+  border-radius: 50%;
+  position: relative;
+  width: 130px;
+  aspect-ratio: 1;
+  box-shadow: 0 7px 0 -0px;
+  cursor: pointer;
+
+  .icon {
+    width: 45px;
+    position: absolute;
+    z-index: 999;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+}
+.gesture::before {
+  content: "";
+  background-color: white;
+  box-shadow: 0 7px hsl(0, 0%, 85%) inset;
+  position: absolute;
+  z-index: 99;
+  inset: 13%;
+  border-radius: 50%;
+}
+.gesture.highlighted::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  width: 100%;
+  aspect-ratio: 1;
+
+  background-color: white;
+  z-index: -1;
+  display: block;
+  box-shadow: 0 0 0 30px hsla(0, 0%, 100%, 0.02),
+    0 0 0 60px hsla(0, 0%, 100%, 0.02), 0 0 0 90px hsla(0, 0%, 100%, 0.02);
+}
+.gesture.empty {
+  box-shadow: 0 0 0 0;
+  background-color: none;
+}
+.gesture.empty::before {
+  inset: 0;
+  background-color: hsla(0, 0%, 0%, 0.2);
+  box-shadow: 0 0 0 0;
+}
+
+.gesture.scissors {
+  background-image: $scissors-gradient;
+  color: hsl(39, 89%, 39%);
+}
+.gesture.rock {
+  background-image: $rock-gradient;
+  color: hsl(349, 71%, 42%);
+}
+.gesture.paper {
+  background-image: $paper-gradient;
+  color: hsl(229, 44%, 46%);
+}
+.gesture.lizard {
+  background-image: $lizard-gradient;
+  color: hsl(261, 73%, 45%);
+}
+.gesture.spock {
+  background-image: $spock-gradient;
+  color: hsl(189, 59%, 38%);
+}
+
+/* ################################ Gestures organizations ################################ */
+.original-pick {
+  display: grid;
+  justify-items: center;
+  column-gap: 3rem;
+  row-gap: 2rem;
+  grid-template-areas:
+    "paper scissors"
+    "rock  rock";
+  max-width: 500px;
+  margin-inline: auto;
+
+  background-image: url("../images/bg-triangle.svg");
+  background-position: center;
+  background-size: 55%;
+  background-repeat: no-repeat;
+
+  .gesture {
+    width: min(130px, 30vw);
+  }
+
+  .paper {
+    grid-area: paper;
+  }
+  .scissors {
+    grid-area: scissors;
+  }
+  .rock {
+    grid-area: rock;
+  }
+}
+
+.bonus-pick {
+  position: relative;
+  max-width: 500px;
+  aspect-ratio: 1;
+  margin-inline: auto;
+
+  background-image: url("../images/bg-pentagon.svg");
+  background-position: center;
+  background-size: 70%;
+  background-repeat: no-repeat;
+
+  .gesture {
+    position: absolute;
+    width: min(100px, 25vw);
+
+    .icon {
+      width: 35px;
+    }
+  }
+
+  .scissors {
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  .paper,
+  .spock {
+    top: 30%;
+  }
+  .paper {
+    right: 0;
+  }
+  .spock {
+    left: 0;
+  }
+  .rock,
+  .lizard {
+    top: 70%;
+  }
+  .rock {
+    right: 12%;
+  }
+  .lizard {
+    left: 12%;
+  }
+}
+
+.two-gesture-container {
+  display: grid;
+  gap: 2rem;
+  text-align: center;
+  justify-items: center;
+
+  grid-template-areas:
+    "player-gesture      house-gesture"
+    "player-pick-message house-pick-message";
+
+  .gesture {
+    width: min(40vw, 130px);
+  }
+
+  .gesture:nth-child(1) {
+    grid-area: player-gesture;
+  }
+  .gesture:nth-child(2) {
+    grid-area: house-gesture;
+  }
+  .player-pick-message {
+    grid-area: player-pick-message;
+  }
+  .house-pick-message {
+    grid-area: house-pick-message;
+  }
+}
+
+@media (min-width: 810px) {
+  .original-pick {
+    .gesture {
+      width: 200px;
+
+      .icon {
+        width: 70px;
+      }
+    }
+  }
+
+  .bonus-pick {
+    .gesture {
+      width: 160px;
+
+      .icon {
+        width: 55px;
+      }
+    }
+  }
+
+  .two-gesture-container,
+  .game-conclusion {
+    .gesture {
+      width: 280px;
+
+      .icon {
+        width: 80px;
+      }
+    }
+  }
+
+  .two-gesture-container {
+    grid-template-areas:
+      "player-pick-message house-pick-message"
+      "player-gesture      house-gesture";
+
+    .gesture {
+      .icon {
+        width: 80px;
+      }
+    }
+  }
+
+  .pick-message {
+    font-size: 1.7rem;
+  }
+}
+
+/* ################################ Rules Modal ################################ */
+#rules-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background-color: white;
+  padding: 6rem 2rem 0;
+  text-align: center;
+
+  .top {
+    margin-bottom: 5rem;
+    max-width: 304px;
+    margin-inline: auto;
+  }
+
+  h2 {
+    color: $dark-text;
+    text-transform: uppercase;
+    font-size: 2.2rem;
+  }
+
+  .close-icon {
+    position: absolute;
+    bottom: 4rem;
+    left: 50%;
+    transform: translateX(-50%);
+    cursor: pointer;
+  }
+
+  .close-icon:hover {
+    filter: brightness(0);
+  }
+}
+
+@media (min-width: 576px) {
+  #rules-modal {
+    width: 410px;
+    inset: 50% auto auto 50%;
+    transform: translate(-50%, -50%);
+    padding: 1rem;
+    border-radius: 0.7rem;
+
+    .top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    h2 {
+      margin: 0;
+    }
+
+    .close-icon {
+      position: static;
+      transform: none;
+    }
+  }
+}
+
+/* ################################ Header ################################ */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 700px;
+  margin-inline: auto;
+
+  border-radius: 0.5rem;
+  border: 1px solid white;
+  padding: 0.8rem;
+  font-weight: 700;
+
+  .logo {
+    height: 50px;
+    margin-left: 0.5rem;
+  }
+
+  .score-container {
+    background-color: white;
+    color: $dark-text;
+    padding: 0.6rem 1.5rem 0.3rem;
+    border-radius: 0.3rem;
+
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .text {
+    font-size: 0.6rem;
+    letter-spacing: 1px;
+    margin-bottom: 0.4rem;
+  }
+
+  .score {
+    margin-top: -0.7rem;
+    font-size: 2.5rem;
+  }
+}
+
+.game {
+  margin-block: 6rem;
+  max-width: 900px;
+  margin-inline: auto;
+}
+
+.buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.message-container {
+  text-align: center;
+  margin-top: 2rem;
+
+  .message {
+    margin-bottom: 1rem;
+    font-size: 3.5rem;
+  }
+}
+
+/* ################################ Game Conclusion ################################ */
+.game-conclusion {
+  display: grid;
+  grid-template-areas:
+    "player-gesture      house-gesture"
+    "player-pick-message house-pick-message"
+    "message             message";
+  justify-items: center;
+  column-gap: 2rem;
+  row-gap: 2rem;
+
+  .gesture:nth-child(1) {
+    grid-area: player-gesture;
+  }
+  .gesture:nth-child(2) {
+    grid-area: house-gesture;
+  }
+  .player-pick-message {
+    grid-area: player-pick-message;
+  }
+  .house-pick-message {
+    grid-area: house-pick-message;
+  }
+  .message-container {
+    grid-area: message;
+  }
+}
+
+@media (min-width: 810px) {
+  /* ################ Header ################ */
+  header {
+    padding: 1.1rem;
+
+    .logo {
+      height: 100px;
+    }
+
+    .score-container {
+      border-radius: 0.6rem;
+      padding: 1rem 3rem 0.6rem;
+    }
+
+    .text {
+      font-size: 1rem;
+    }
+
+    .score {
+      font-size: 4rem;
+    }
+  }
+
+  .buttons {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 3rem;
+    z-index: 9990;
+
+    max-width: 1200px;
+    margin: auto;
+    padding-inline: 2rem;
+
+    flex-direction: row-reverse;
+    justify-content: space-between;
+
+    .btn {
+      margin: 0;
+    }
+  }
+
+  .game-conclusion {
+    grid-template-areas:
+      "player-pick-message    .    house-pick-message"
+      "player-gesture      message house-gesture";
+  }
+}
+
+/* ################################ Footer ################################ */
+footer {
+  text-align: center;
+  margin-top: 10rem;
+
+  a {
+    color: $blue-text;
+  }
+}
