@@ -51,10 +51,9 @@ img {
 }
 
 .secondary-btn {
-  display: block;
   background-color: white;
   color: hsl(229, 25%, 31%);
-  padding: 1rem 3.7rem;
+  padding: 1rem 3rem;
 }
 
 .secondary-btn:hover {
@@ -65,13 +64,11 @@ img {
 .gesture {
   border-radius: 50%;
   position: relative;
-  width: 130px;
   aspect-ratio: 1;
   box-shadow: 0 var(--box-shadow-vertical-offset, 5px) 0 0px;
   cursor: pointer;
 }
 .gesture .icon {
-  width: 45px;
   position: absolute;
   z-index: 999;
   left: 50%;
@@ -234,6 +231,14 @@ img {
   grid-area: house-pick-message;
 }
 
+@media (max-width: 280px) {
+  .two-gesture-container .gesture {
+    width: 90px;
+  }
+  .game-conclusion .gesture {
+    width: 90px;
+  }
+}
 @media (min-width: 576px) {
   .bonus-pick .gesture .icon {
     width: 45px;

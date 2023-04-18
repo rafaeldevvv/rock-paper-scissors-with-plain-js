@@ -10,7 +10,8 @@ This is a solution to the [Rock, Paper, Scissors challenge on Frontend Mentor](h
   - [Links](#links)
 - [My process](#my-process)
   - [Built with](#built-with)
-  - [What I learned](#the-project--what-i-learned)
+  - [The logic](#the-logic)
+  - [The style](#the-style)
   - [Continued development](#continued-development)
   - [Useful resources](#useful-resources)
 - [Author](#author)
@@ -46,7 +47,7 @@ Users should be able to:
 - Mobile-first workflow
 - JavaScript
 
-### The project | What I learned
+### The logic
 
 This project was quite fun to build and I learned a lot of things.
 
@@ -164,6 +165,7 @@ class App {
 ```
 
 The game state changes are caused by the user picking a gesture and by some timeouts that are scheduled when the user picks a gesture. I know you might be thinking that the "house_picked" status may be unnecessary - I agree - but I think it describes more what is happening.
+
 ```js
 class Game {
   constructor(gestures, onEnd) {
@@ -223,6 +225,7 @@ class Game {
 ```
 
 Finally, the rendering is done by functions inside the rendering.js file. The renderGame function is responsible for rendering the game depending on the current status. It takes the game object itself as parameter. I couldn't just call restart() here because I would run into the same problem as I did with the onPick method - the this inside the method would not hold the game object. Also game.restart() is more descriptive than just restart();
+
 ```js
 export function renderGame(game) {
   const { status, dom, playerGesture, houseGesture, gestures, onPick } = game;
@@ -244,6 +247,7 @@ export function renderGame(game) {
 ```
 
 This function returns the header and the DOM node for the score because this is simpler than having to create the score DOM node inside the App class.
+
 ```js
 export function renderHeader(renderHeaderForOriginalGame) {
   const logoSrc = renderHeaderForOriginalGame
@@ -269,6 +273,175 @@ export function renderHeader(renderHeaderForOriginalGame) {
     ),
     scoreNumberDOM,
   ];
+}
+```
+
+### The style
+
+This responsiveness of this project was quite complex and I had some difficulty with placing the gestures on the screen. But I think it was really good practice - my CSS knowledge is really good.
+
+I used the min function sometimes because the gestures weren't fitting in very small screens, especially in the galaxy fold - what an annoying device. I even had to make a media query specifically for this one.
+
+I built specific classes for the different gestures. The original pick was quite easy - I just used grid layout.
+
+```scss
+.original-pick {
+  display: grid;
+  justify-items: center;
+  column-gap: 3rem;
+  row-gap: 2rem;
+  grid-template-areas:
+    "paper scissors"
+    "rock  rock";
+  max-width: 500px;
+  margin-inline: auto;
+
+  background-image: url("../images/bg-triangle.svg");
+  background-position: center;
+  background-size: 55%;
+  background-repeat: no-repeat;
+
+  .gesture {
+    width: min(130px, 35vw);
+  }
+
+  .paper {
+    grid-area: paper;
+  }
+  .scissors {
+    grid-area: scissors;
+  }
+  .rock {
+    grid-area: rock;
+  }
+}
+```
+
+The bonus pick was a little bit harder. I tried to implement it with grid layout at first, but as you might expect it didn't work. So I thought of using absolutely positioned elements with percentage values and aspect ratio. This approach worked quite well.
+
+```scss
+.bonus-pick {
+  position: relative;
+  max-width: 500px;
+  aspect-ratio: 1;
+  margin-inline: auto;
+
+  background-image: url("../images/bg-pentagon.svg");
+  background-position: center;
+  background-size: 70%;
+  background-repeat: no-repeat;
+
+  .gesture {
+    position: absolute;
+    width: min(160px, 25vw);
+
+    .icon {
+      width: 30px;
+    }
+  }
+
+  .scissors {
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  .paper,
+  .spock {
+    top: 30%;
+  }
+  .paper {
+    right: 0;
+  }
+  .spock {
+    left: 0;
+  }
+  .rock,
+  .lizard {
+    top: 70%;
+  }
+  .rock {
+    right: 12%;
+  }
+  .lizard {
+    left: 12%;
+  }
+}
+```
+
+The .gesture class was quite fun. I was in doubt about how I would make it. I tried with borders at first, but it as a gradient. Then I tried making the before pseudo-element "be" the border. None of these approaches were working so I had to think of another one. But in the end I found this one - which works perfectly:
+```scss
+.gesture {
+  border-radius: 50%;
+  position: relative;
+  aspect-ratio: 1;
+  box-shadow: 0 var(--box-shadow-vertical-offset, 5px) 0 -0px;
+  cursor: pointer;
+
+  .icon {
+    position: absolute;
+    z-index: 999;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+}
+.gesture::before {
+  content: "";
+  background-color: white;
+  box-shadow: 0 var(--box-shadow-vertical-offset, 5px) hsl(0, 0%, 85%) inset;
+  position: absolute;
+  z-index: 99;
+  inset: 13%;
+  border-radius: 50%;
+}
+.gesture.highlighted::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  width: 100%;
+  aspect-ratio: 1;
+
+  background-color: white;
+  z-index: -1;
+  display: block;
+  box-shadow: 0 0 0 30px hsla(0, 0%, 100%, 0.02),
+    0 0 0 60px hsla(0, 0%, 100%, 0.02), 0 0 0 90px hsla(0, 0%, 100%, 0.02);
+}
+.gesture.empty {
+  box-shadow: 0 0 0 0;
+  background-color: none;
+}
+.gesture.empty::before {
+  inset: 0;
+  background-color: hsla(0, 0%, 0%, 0.2);
+  box-shadow: 0 0 0 0;
+}
+```
+
+In order to not specify the box-shadow for each one of the gestures, I specified the color property. This works because the color of the box-shadow is the current color by default.
+```scss
+.gesture.scissors {
+  background-image: $scissors-gradient;
+  color: hsl(39, 89%, 39%);
+}
+.gesture.rock {
+  background-image: $rock-gradient;
+  color: hsl(349, 71%, 42%);
+}
+.gesture.paper {
+  background-image: $paper-gradient;
+  color: hsl(229, 44%, 46%);
+}
+.gesture.lizard {
+  background-image: $lizard-gradient;
+  color: hsl(261, 73%, 45%);
+}
+.gesture.spock {
+  background-image: $spock-gradient;
+  color: hsl(189, 59%, 38%);
 }
 ```
 
