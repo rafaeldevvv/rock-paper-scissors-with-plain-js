@@ -16,3 +16,7 @@ export function elt(type, attrs, ...children) {
 export function getRandomItem(array) {
   return array[Math.floor(Math.random() * array.length)];
 }
+
+export function checkIsOriginalGame() {
+  return localStorage.getItem('isOriginalGame') === 'true';
+}

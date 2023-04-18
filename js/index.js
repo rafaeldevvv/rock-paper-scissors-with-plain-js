@@ -1,6 +1,6 @@
 "use strict";
 
-import { elt, getRandomItem } from "./utilities.js";
+import { elt, getRandomItem, checkIsOriginalGame } from "./utilities.js";
 import showRules from "./showRules.js";
 import { originalGestures, bonusGestures } from "./gestures.js";
 import {
@@ -10,6 +10,7 @@ import {
   renderFooter,
 } from "./rendering.js";
 
+// Original game by default
 if (!localStorage.getItem("isOriginalGame")) {
   localStorage.setItem("isOriginalGame", true);
 }
@@ -52,7 +53,7 @@ class Game {
         newStatus = "tie";
       }
 
-      this.onEnd(newStatus);
+      if (this.onEnd) this.onEnd(newStatus);
       this.syncState(newStatus);
     }, 1750);
   }
@@ -75,7 +76,7 @@ class App {
     // I stored the score here because I thought of the game as something
     // separate from it.
     this.score = Number(localStorage.getItem("score")) || 0;
-    const isOriginalGame = localStorage.getItem("isOriginalGame") === "true";
+    const isOriginalGame = checkIsOriginalGame();
 
     const [header, scoreDOM] = renderHeader(isOriginalGame);
     this.headerDOM = elt("div", null, header);
@@ -90,7 +91,7 @@ class App {
 
     // The function to show the rules and change the game, respectively
     const buttons = renderBottomButtons(
-      () => showRules(localStorage.getItem("isOriginalGame") === "true"),
+      () => showRules(checkIsOriginalGame()),
       () => this.changeGame()
     );
 
@@ -107,6 +108,7 @@ class App {
   }
 
   updateScore(status) {
+    // If it is a tie, nothing happens
     if (status === "won") {
       this.score += 1;
       this.scoreDOM.textContent = this.score;
@@ -119,12 +121,11 @@ class App {
   }
 
   changeGame() {
-    const isOriginalGame = localStorage.getItem("isOriginalGame") === "true";
+    const isOriginalGame = checkIsOriginalGame();
 
     // It uses "!" because we need to render the header for the new game
     const [newHeader, newScoreDOM] = renderHeader(!isOriginalGame);
-    newScoreDOM.textContent = this.score;
-    
+
     const newGame = new Game(
       isOriginalGame ? bonusGestures : originalGestures,
       (status) => {
@@ -136,6 +137,7 @@ class App {
     this.headerDOM.appendChild(newHeader);
 
     this.scoreDOM = newScoreDOM;
+    newScoreDOM.textContent = this.score;
 
     this.gameDOM.textContent = "";
     this.gameDOM.appendChild(newGame.dom);

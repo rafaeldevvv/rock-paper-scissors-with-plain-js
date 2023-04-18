@@ -5,6 +5,10 @@
   box-sizing: border-box;
 }
 
+:root {
+  --box-shadow-vertical-offset: 4px;
+}
+
 body {
   background-image: radial-gradient(hsl(214, 47%, 23%), hsl(237, 49%, 15%));
   font-family: "Barlow Semi Condensed", sans-serif;
@@ -63,7 +67,7 @@ img {
   position: relative;
   width: 130px;
   aspect-ratio: 1;
-  box-shadow: 0 7px 0 0px;
+  box-shadow: 0 var(--box-shadow-vertical-offset, 5px) 0 0px;
   cursor: pointer;
 }
 .gesture .icon {
@@ -78,7 +82,7 @@ img {
 .gesture::before {
   content: "";
   background-color: white;
-  box-shadow: 0 7px hsl(0, 0%, 85%) inset;
+  box-shadow: 0 var(--box-shadow-vertical-offset, 5px) hsl(0, 0%, 85%) inset;
   position: absolute;
   z-index: 99;
   inset: 13%;
@@ -152,7 +156,7 @@ img {
   background-repeat: no-repeat;
 }
 .original-pick .gesture {
-  width: min(130px, 30vw);
+  width: min(130px, 35vw);
 }
 .original-pick .paper {
   grid-area: paper;
@@ -176,10 +180,10 @@ img {
 }
 .bonus-pick .gesture {
   position: absolute;
-  width: min(100px, 25vw);
+  width: min(160px, 25vw);
 }
 .bonus-pick .gesture .icon {
-  width: 35px;
+  width: 30px;
 }
 .bonus-pick .scissors {
   top: 0;
@@ -230,7 +234,15 @@ img {
   grid-area: house-pick-message;
 }
 
+@media (min-width: 576px) {
+  .bonus-pick .gesture .icon {
+    width: 45px;
+  }
+}
 @media (min-width: 810px) {
+  :root {
+    --box-shadow-vertical-offset: 7px;
+  }
   .original-pick .gesture {
     width: 200px;
   }
@@ -296,7 +308,7 @@ img {
     width: 410px;
     inset: 50% auto auto 50%;
     transform: translate(-50%, -50%);
-    padding: 1rem;
+    padding: 1rem 1rem 2rem;
     border-radius: 0.7rem;
   }
   #rules-modal .top {
@@ -412,6 +424,9 @@ header .score {
   header .score {
     font-size: 4rem;
   }
+  .game {
+    margin-block: 4rem;
+  }
   .buttons {
     position: fixed;
     left: 0;
@@ -423,9 +438,11 @@ header .score {
     padding-inline: 2rem;
     flex-direction: row-reverse;
     justify-content: space-between;
+    pointer-events: none;
   }
   .buttons .btn {
     margin: 0;
+    pointer-events: all;
   }
   .game-conclusion {
     grid-template-areas: "player-pick-message    .    house-pick-message" "player-gesture      message house-gesture";
